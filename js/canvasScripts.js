@@ -4,6 +4,24 @@ const canvas01 = htmlCanvas01.getContext("2d");
 htmlCanvas01.width = window.innerWidth;
 htmlCanvas01.height = window.innerHeight;
 const particlesArray = [];
+/*
+Hue - оттенок.
+   Отображается в виде градусной цветовой окружности.
+     (0, 100%, 50%) - red,
+     (120, 100%, 50%) - green,
+     (240, 100%, 50%) - blue.
+Saturation - насыщенность.
+   Отображается в процентном соотношении.
+     (0, 0%, 0%) - grey,
+     (0, 100%, 100%) - fullcolor.
+Lightness - яркость.
+   Отображается в процентном соотношении.
+    (0, 50%, 0%) - black,
+    (0, 50%, 50%) - fullcolor,
+    (0, 50%, 100%) - white.
+*/
+// Переменная хранения цвета HSL.
+var hue = 0;
 // Установка тригера изменения размеров окна браузера.
 window.addEventListener("resize", function () {
   // Растягивание холста на всю страницу. x(width) y(height).
@@ -39,19 +57,20 @@ htmlCanvas01.addEventListener("click", function (event) {
   mouse.x = event.x;
   mouse.y = event.y;
   // Заполнение массива элементами отрисовки.
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 15; i++) {
     particlesArray.push(new Particle());
   }
-  // Рекурсия отрисовки элементов.
-  animate();
 });
-/*
+
 // Триггер клика левой кнопкой мыши.
 htmlCanvas01.addEventListener("mousemove", function (event) {
   mouse.x = event.x;
   mouse.y = event.y;
-  console.log(event);
-});*/
+  // Заполнение массива элементами отрисовки.
+  for (let i = 0; i < 15; i++) {
+    particlesArray.push(new Particle());
+  }
+});
 /*
 // Триггер перемещения курсора по экрану.
 function drawCircle() {
@@ -71,10 +90,11 @@ class Particle {
     // this.y = Math.random() * htmlCanvas01.height;
     this.y = mouse.y;
     // Получение размера объекта.
-    this.size = Math.random() * 25 + 1; //  1-25
+    this.size = Math.random() * 15 + 1; //  1-25
     // Изменение скорости вектора.
-    this.speedX = Math.random() * 3 - 1.5; // 0-1.5
-    this.speedY = Math.random() * 3 - 1.5; // 0-1.5
+    this.speedX = Math.random() * 2 - 1; // 0-1
+    this.speedY = Math.random() * 2 - 1; // 0-1
+    this.color = 'hsl(' + hue + ', 50%, 50%)';
   }
   update() {
     // Изменение вектора движения элеметов.
@@ -86,7 +106,7 @@ class Particle {
 
   draw() {
     // Отрисовка элементов на холсте.
-    canvas01.fillStyle = "blue";
+    canvas01.fillStyle = this.color;
     // Установка ширины обводки
     canvas01.beginPath();
     // Создание окружности(метод также используется для создания изогнутой линии или полкруга).
@@ -103,7 +123,7 @@ function init() {
   }
 }
 */
-// Считывание информации из массива элеметов для отрисовки.
+// Считывание информации и отрисовка окружностей на холсте.
 function handleParticles() {
   for (let i = 0; i < particlesArray.length; i++) {
     particlesArray[i].update();
@@ -115,17 +135,20 @@ function handleParticles() {
   }
 }
 // Рекурсия изменения вектора отрисовки элементов массива particlesArray.
-var countAnimate = 0;
 function animate() {
-  if (countAnimate === 250) location.reload();
+  canvas01.fillStyle = "rgba(0,0,0,0.02)";
+  canvas01.fillRect(0, 0, htmlCanvas01.width, htmlCanvas01.height);
   // Очищение холста с крайнего верхнего угла до крайнего нижнего угла.
-  canvas01.clearRect(0, 0, htmlCanvas01.width, htmlCanvas01.height);
+  // canvas01.clearRect(0, 0, htmlCanvas01.width, htmlCanvas01.height);
   // Отрисовка элементов массива  particlesArray.
   handleParticles();
+  // Инкрементация цвета HSL.
+  hue++;
   // Единоразовый вызов функции отображения фрейма анимации.
   requestAnimationFrame(animate);
   // Перезагрузка страницы после считывания элементов массива.
   // if (particlesArray.length === 0) location.reload();
-  countAnimate++;
   console.log(particlesArray.length);
 }
+// Отрисовка окружностей в рекурсионной функции.
+animate();
