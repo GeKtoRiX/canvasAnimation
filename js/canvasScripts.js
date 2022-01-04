@@ -70,8 +70,8 @@ class Particle {
     this.x = mouse.x;
     // this.y = Math.random() * htmlCanvas01.height;
     this.y = mouse.y;
-    // Получение кол-ва элементов в объекте.
-    this.size = Math.random() * 25 + 1; //  1-5
+    // Получение размера объекта.
+    this.size = Math.random() * 25 + 1; //  1-25
     // Изменение скорости вектора.
     this.speedX = Math.random() * 3 - 1.5; // 0-1.5
     this.speedY = Math.random() * 3 - 1.5; // 0-1.5
@@ -115,7 +115,9 @@ function handleParticles() {
   }
 }
 // Рекурсия изменения вектора отрисовки элементов массива particlesArray.
+var countAnimate = 0;
 function animate() {
+  if (countAnimate === 250) location.reload();
   // Очищение холста с крайнего верхнего угла до крайнего нижнего угла.
   canvas01.clearRect(0, 0, htmlCanvas01.width, htmlCanvas01.height);
   // Отрисовка элементов массива  particlesArray.
@@ -123,6 +125,7 @@ function animate() {
   // Единоразовый вызов функции отображения фрейма анимации.
   requestAnimationFrame(animate);
   // Перезагрузка страницы после считывания элементов массива.
-  if (particlesArray.length === 0) location.reload();
+  // if (particlesArray.length === 0) location.reload();
+  countAnimate++;
   console.log(particlesArray.length);
 }
