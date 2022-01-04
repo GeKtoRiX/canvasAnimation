@@ -67,7 +67,7 @@ htmlCanvas01.addEventListener("mousemove", function (event) {
   mouse.x = event.x;
   mouse.y = event.y;
   // Заполнение массива элементами отрисовки.
-  for (let i = 0; i < 15; i++) {
+  for (let i = 0; i < 5; i++) {
     particlesArray.push(new Particle());
   }
 });
@@ -90,11 +90,12 @@ class Particle {
     // this.y = Math.random() * htmlCanvas01.height;
     this.y = mouse.y;
     // Получение размера объекта.
-    this.size = Math.random() * 15 + 1; //  1-25
+    this.size = Math.random() * 10 + 1; //  1-50.
     // Изменение скорости вектора.
-    this.speedX = Math.random() * 2 - 1; // 0-1
-    this.speedY = Math.random() * 2 - 1; // 0-1
-    this.color = 'hsl(' + hue + ', 50%, 50%)';
+    (this.speedX = Math.random() * 3 - 1), 5; // 0-1
+    this.speedY = Math.random() * 3 - 1.5; // 0-1
+    // Изменение цвета заливки холста от каждого элемента.
+    this.color = "hsl(" + hue + ", 50%, 50%)";
   }
   update() {
     // Изменение вектора движения элеметов.
@@ -128,6 +129,29 @@ function handleParticles() {
   for (let i = 0; i < particlesArray.length; i++) {
     particlesArray[i].update();
     particlesArray[i].draw();
+
+    for (let j = i; j < particlesArray.length; j++) {
+      // Нахождение катета координаты x.
+      const dx = particlesArray[i].x - particlesArray[j].x;
+      // Нахождение катета координаты y.
+      const dy = particlesArray[i].y - particlesArray[j].y;
+      // Нахождение гипотенузы(расстояние между точками координат).
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      if (distance < 50) {
+        // Начало отрисовки новой линии.
+        canvas01.beginPath();
+        // Изменение цвета заливки линии.
+        canvas01.strokeStyle = particlesArray[i].color;
+        // Изменение ширины линии через использование радиуса окружности в элементе.
+        canvas01.lineWidth = particlesArray[i].size / 3;
+        // Перемещение "курсора" на сравниваемую координату внешнего цикла i.
+        canvas01.moveTo(particlesArray[i].x, particlesArray[i].y);
+        // Отрисовка линии от координат внешнего цикла(сравниваемая координата) к координату внутреннего цикла y.
+        canvas01.lineTo(particlesArray[j].x, particlesArray[j].y);
+        // Отображение отрисованной линии.
+        canvas01.stroke();
+      }
+    }
     if (particlesArray[i].size <= 0.5) {
       particlesArray.splice(i, 1);
       i--;
@@ -136,14 +160,17 @@ function handleParticles() {
 }
 // Рекурсия изменения вектора отрисовки элементов массива particlesArray.
 function animate() {
+  /*
+  // Полупрозрачное залитие фона для отрисовки "следа" элементов при их изменении.
   canvas01.fillStyle = "rgba(0,0,0,0.02)";
   canvas01.fillRect(0, 0, htmlCanvas01.width, htmlCanvas01.height);
+  */
   // Очищение холста с крайнего верхнего угла до крайнего нижнего угла.
-  // canvas01.clearRect(0, 0, htmlCanvas01.width, htmlCanvas01.height);
+  canvas01.clearRect(0, 0, htmlCanvas01.width, htmlCanvas01.height);
   // Отрисовка элементов массива  particlesArray.
   handleParticles();
   // Инкрементация цвета HSL.
-  hue++;
+  hue += 5;
   // Единоразовый вызов функции отображения фрейма анимации.
   requestAnimationFrame(animate);
   // Перезагрузка страницы после считывания элементов массива.
